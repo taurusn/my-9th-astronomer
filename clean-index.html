@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My 9th Astronomer - Professional Inward Parallax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #050815 0%, #0a0f1a 50%, #050815 100%);
+            color: #fff;
+            font-family: 'Cormorant Garamond', serif;
+            overflow: hidden;
+            height: 100vh;
+            perspective: 1000px;
+        }
+
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2000px;
+        }
+
+        .zoom-stage {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .section {
+            position: absolute;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .section.active {
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: #B294FF;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 30px rgba(178, 148, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: #F5F3CE;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .poem-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #B294FF;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(178, 148, 255, 0.4);
+        }
+
+        .poem-text {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            line-height: 1.8;
+            color: #F8EDEB;
+        }
+
+        .poem-text p {
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .section.active .poem-text p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section.active .poem-text p:nth-child(1) { transition-delay: 0.2s; }
+        .section.active .poem-text p:nth-child(2) { transition-delay: 0.4s; }
+        .section.active .poem-text p:nth-child(3) { transition-delay: 0.6s; }
+        .section.active .poem-text p:nth-child(4) { transition-delay: 0.8s; }
+        .section.active .poem-text p:nth-child(5) { transition-delay: 1.0s; }
+        .section.active .poem-text p:nth-child(6) { transition-delay: 1.2s; }
+
+        /* Final Message Styling */
+        .final-message {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .final-message p {
+            margin: 1.5rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .section.active .final-message p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .revelation {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+            color: #F8EDEB;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 2rem !important;
+        }
+
+        .astronomer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            color: #B294FF;
+            font-weight: 700;
+            text-shadow: 0 0 25px rgba(178, 148, 255, 0.6);
+            margin: 2.5rem 0 !important;
+            letter-spacing: 2px;
+        }
+
+        .birthday-wish {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: #ffd700;
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            margin: 2rem 0 !important;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            color: #F5F3CE;
+            font-weight: 400;
+            font-style: italic;
+            margin-top: 3rem !important;
+            text-shadow: 0 0 10px rgba(245, 243, 206, 0.3);
+        }
+
+        .section.active .final-message .revelation { transition-delay: 0.3s; }
+        .section.active .final-message .astronomer-title { transition-delay: 0.6s; }
+        .section.active .final-message .birthday-wish { transition-delay: 0.9s; }
+        .section.active .final-message .signature { transition-delay: 1.2s; }
+
+        /* Separate dynamic star layers */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: 50% 50%;
+        }
+
+        .star {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out alternate;
+            box-shadow: 0 0 2px rgba(255,255,255,0.3);
+        }
+
+        .star.small {
+            width: 0.8px;
+            height: 0.8px;
+        }
+
+        .star.medium {
+            width: 1.2px;
+            height: 1.2px;
+        }
+
+        .star.large {
+            width: 1.6px;
+            height: 1.6px;
+        }
+
+        .star.purple {
+            background: radial-gradient(circle, rgba(178,148,255,0.7) 0%, transparent 60%);
+            box-shadow: 0 0 2px rgba(178,148,255,0.4);
+        }
+
+        .star.yellow {
+            background: radial-gradient(circle, rgba(245,243,206,0.6) 0%, transparent 60%);
+            box-shadow: 0 0 2px rgba(245,243,206,0.3);
+        }
+
+        .star.blue {
+            background: radial-gradient(circle, rgba(135,206,250,0.6) 0%, transparent 60%);
+            box-shadow: 0 0 2px rgba(135,206,250,0.3);
+        }
+
+        .static-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                /* Ultra dense static micro stars - CLEARER */
+                radial-gradient(0.2px 0.2px at 3% 7%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 8% 13%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 13% 19%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 18% 25%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 23% 31%, rgba(178, 148, 255, 0.35), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 28% 37%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 33% 43%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 38% 49%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 43% 55%, rgba(245, 243, 206, 0.35), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 48% 61%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 53% 67%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 58% 73%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 63% 79%, rgba(255, 255, 255, 0.35), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 68% 85%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 73% 91%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 78% 97%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 83% 3%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 88% 9%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 93% 15%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 98% 21%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 7% 27%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 12% 33%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 17% 39%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 22% 45%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 27% 51%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 32% 57%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 37% 63%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 42% 69%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 47% 75%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 52% 81%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 57% 87%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 62% 93%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 67% 99%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 72% 5%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 77% 11%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 82% 17%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 87% 23%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 92% 29%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 97% 35%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 2% 41%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 6% 47%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 11% 53%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 16% 59%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 21% 65%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 26% 71%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 31% 77%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 36% 83%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 41% 89%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 46% 95%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 51% 1%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 56% 8%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 61% 14%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 66% 20%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 71% 26%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 76% 32%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 81% 38%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 86% 44%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 91% 50%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 96% 56%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 1% 62%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 5% 68%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 10% 74%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 15% 80%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 20% 86%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 25% 92%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 30% 98%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 35% 4%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 40% 10%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 45% 16%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 50% 22%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 55% 28%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 60% 34%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 65% 40%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 70% 46%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 75% 52%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 80% 58%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 85% 64%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 90% 70%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 95% 76%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 4% 82%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 9% 88%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 14% 94%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 19% 6%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 24% 12%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 29% 18%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 34% 24%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 39% 30%, rgba(245, 243, 206, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 44% 36%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 49% 42%, rgba(178, 148, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 54% 48%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 59% 54%, rgba(255, 255, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 64% 60%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 69% 66%, rgba(245, 243, 206, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 74% 72%, rgba(255, 255, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 79% 78%, rgba(178, 148, 255, 0.4), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 84% 84%, rgba(245, 243, 206, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 89% 90%, rgba(255, 255, 255, 0.3), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 94% 96%, rgba(178, 148, 255, 0.2), transparent 0.3px),
+                radial-gradient(0.2px 0.2px at 99% 2%, rgba(245, 243, 206, 0.4), transparent 0.3px);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .navigation {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(178, 148, 255, 0.3);
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(178, 148, 255, 0.5);
+        }
+
+        .nav-dot.active {
+            background: #B294FF;
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(178, 148, 255, 0.6);
+        }
+
+        .zoom-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                width: 90%;
+                padding: 0 1rem;
+            }
+            
+            .navigation {
+                right: 20px;
+            }
+        }
+    </style>
+    
+    <!-- Music Player Script -->
+    <script src="music-player.js"></script>
+</head>
+<body>
+    <!-- Static background stars -->
+    <div class="static-stars"></div>
+    
+    <!-- Dynamic moving stars -->
+    <div class="stars" id="stars">
+        <div class="star-layer" id="starLayer1"></div>
+        <div class="star-layer" id="starLayer2"></div>
+        <div class="star-layer" id="starLayer3"></div>
+    </div>
+    
+    <div class="container">
+        <div class="zoom-stage" id="zoomStage">
+            
+            <!-- Section 0: Intro -->
+            <div class="section active" data-depth="0">
+                <h1 class="title">Sorry am late</h1>
+                <p class="subtitle">Shall we began? <br> scroll down princess</p>
+            </div>
+
+            <!-- Section 1: Poem -->
+            <div class="section" data-depth="1">
+                <h2 class="poem-title">At the first sight</h2>
+                <div class="poem-text">
+                    <p>You appeared to me, randomly—yet surely meant to be.</p>
+                    <p>And the breath within my chest could no longer hold itself, and spoke:</p>
+                    <div style="direction: rtl; text-align: right; margin-top: 20px;">
+                        <p>وإن كنتِ في متحفٍ<br>
+                        فأيُّ متحفٍ به نلقى عيناكِ؟</p>
+                        <p>وإن كنتِ تُحفةً،<br>
+                        فأيُّ أرضٍ غير الفردوس نلقاكِ؟</p>
+                        <p>عينا ملاكٍ لا رِجسٌ بها،<br>
+                        ونَتَجٌ عن حُسنٍ قديمٍ قد أتاكِ.</p>
+                        <p>زهرٌ من النور يشدو به،<br>
+                        وفيكِ من الجمال وبهائه نِداكِ.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Poem 1 -->
+            <div class="section" data-depth="2">
+                <h2 class="poem-title">final-message</h2>
+                <div class="poem-text">
+                    <p>And then I found my ninth and only astronomer</p>
+                    <br>
+                    <h2 class="poem-title">My Ninth Astronomer</h2>
+                    <p>Happy Birthday,<br> with love</p>
+                    <p class="signature">Hatim</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="navigation" id="navigation">
+        <div class="nav-dot active" data-section="0"></div>
+        <div class="nav-dot" data-section="1"></div>
+        <div class="nav-dot" data-section="2"></div>
+    </div>
+
+    <div class="zoom-indicator">
+        Scroll to zoom through the cosmic layers
+    </div>
+
+    <script>
+        class InwardZoomParallax {
+            constructor() {
+                this.zoomProgress = 0; // Continuous zoom from 0 to 2
+                this.maxZoom = 2;
+                this.isScrolling = false;
+                this.zoomStage = document.getElementById('zoomStage');
+                this.sections = document.querySelectorAll('.section');
+                this.navDots = document.querySelectorAll('.nav-dot');
+                this.stars = document.getElementById('stars');
+                this.starLayers = document.querySelectorAll('.star-layer');
+                this.dynamicStars = [];
+                this.starRegenerationTimer = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.createDynamicStars();
+                this.setupSections();
+                this.bindEvents();
+                this.updateView();
+                
+                // Cleanup on page unload
+                window.addEventListener('beforeunload', () => {
+                    this.cleanup();
+                });
+            }
+
+            cleanup() {
+                if (this.starRegenerationTimer) {
+                    clearInterval(this.starRegenerationTimer);
+                    this.starRegenerationTimer = null;
+                }
+            }
+
+            createDynamicStars() {
+                const colors = ['white', 'purple', 'yellow', 'blue'];
+                const sizes = ['small', 'medium', 'large'];
+                
+                // Create initial star pools for each layer - FULL WINDOW COVERAGE
+                this.starLayers.forEach((layer, layerIndex) => {
+                    const starsInLayer = 35 + (layerIndex * 12); // More stars for full coverage: 35, 47, 59
+                    
+                    for (let i = 0; i < starsInLayer; i++) {
+                        this.createSingleStar(layer, layerIndex, colors, sizes);
+                    }
+                });
+                
+                // Set up continuous star regeneration with optimized timing
+                this.starRegenerationTimer = setInterval(() => {
+                    this.regenerateStars();
+                }, 500); // Slightly faster for better coverage
+            }
+
+            createSingleStar(layer, layerIndex, colors, sizes) {
+                const star = document.createElement('div');
+                star.className = `star ${sizes[Math.floor(Math.random() * sizes.length)]} ${colors[Math.floor(Math.random() * colors.length)]}`;
+                
+                // Create stars EVERYWHERE across the window - not just center
+                const x = Math.random() * 100; // Full width: 0-100%
+                const y = Math.random() * 100; // Full height: 0-100%
+                
+                star.style.left = x + '%';
+                star.style.top = y + '%';
+                
+                // Store properties for animation - FIXED for full window
+                star.baseX = x;
+                star.baseY = y;
+                star.layerIndex = layerIndex;
+                star.speed = 0.8 + Math.random() * 0.4;
+                star.birthTime = this.zoomProgress;
+                
+                // Calculate direction from center (50%, 50%) to star position
+                const centerX = 50;
+                const centerY = 50;
+                const deltaX = x - centerX;
+                const deltaY = y - centerY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                
+                // Ensure stars move outward from center to their position
+                star.directionX = distance > 0 ? deltaX / distance : 0;
+                star.directionY = distance > 0 ? deltaY / distance : 0;
+                
+                // Animation delay
+                star.style.animationDelay = (Math.random() * 2) + 's';
+                
+                layer.appendChild(star);
+                this.dynamicStars.push(star);
+            }
+
+            regenerateStars() {
+                const colors = ['white', 'purple', 'yellow', 'blue'];
+                const sizes = ['small', 'medium', 'large'];
+                
+                // Remove stars that are too far out or too old
+                this.dynamicStars = this.dynamicStars.filter(star => {
+                    const age = this.zoomProgress - star.birthTime;
+                    const rect = star.getBoundingClientRect();
+                    const isOutOfBounds = rect.left < -50 || rect.right > window.innerWidth + 50 || 
+                                        rect.top < -50 || rect.bottom > window.innerHeight + 50;
+                    
+                    if (age > 2 || isOutOfBounds || star.style.opacity < 0.1) {
+                        star.remove();
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Add new stars to maintain count - FULL WINDOW COVERAGE
+                this.starLayers.forEach((layer, layerIndex) => {
+                    const currentStarsInLayer = this.dynamicStars.filter(star => star.layerIndex === layerIndex).length;
+                    const targetStars = 35 + (layerIndex * 12); // Match new full coverage count
+                    
+                    // Add new stars if we're below target
+                    for (let i = currentStarsInLayer; i < targetStars; i++) {
+                        this.createSingleStar(layer, layerIndex, colors, sizes);
+                    }
+                });
+            }
+
+            setupSections() {
+                this.sections.forEach((section, index) => {
+                    const depth = index * -2000;
+                    section.style.transform = `translateZ(${depth}px)`;
+                    section.classList.remove('active');
+                });
+                this.sections[0].classList.add('active');
+            }
+
+            bindEvents() {
+                // Smooth wheel scrolling
+                document.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    
+                    if (this.isScrolling) return;
+                    
+                    // Smooth continuous zoom instead of discrete jumps
+                    const zoomSpeed = 0.15; // Balanced speed - not too fast, not too slow
+                    const direction = e.deltaY > 0 ? zoomSpeed : -zoomSpeed;
+                    
+                    this.zoomProgress = Math.max(0, Math.min(this.maxZoom, this.zoomProgress + direction));
+                    this.updateView();
+                    
+                }, { passive: false });
+
+                // Touch events for smooth mobile scrolling
+                let startY = 0;
+                let isTouch = false;
+                
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    isTouch = true;
+                });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!isTouch) return;
+                    e.preventDefault();
+                    
+                    const currentY = e.touches[0].clientY;
+                    const diff = (startY - currentY) * 0.01; // Smooth touch sensitivity
+                    
+                    this.zoomProgress = Math.max(0, Math.min(this.maxZoom, this.zoomProgress + diff));
+                    this.updateView();
+                    
+                    startY = currentY; // Update for continuous movement
+                }, { passive: false });
+
+                document.addEventListener('touchend', () => {
+                    isTouch = false;
+                });
+
+                // Keyboard navigation - still discrete for accessibility
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === ' ') {
+                        e.preventDefault();
+                        this.smoothZoomTo(Math.min(this.maxZoom, Math.floor(this.zoomProgress) + 1));
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        this.smoothZoomTo(Math.max(0, Math.floor(this.zoomProgress)));
+                    }
+                });
+
+                // Navigation dots
+                this.navDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        this.smoothZoomTo(index);
+                    });
+                });
+            }
+
+            smoothZoomTo(targetZoom) {
+                if (this.isScrolling) return;
+                
+                this.isScrolling = true;
+                const startZoom = this.zoomProgress;
+                const distance = targetZoom - startZoom;
+                const duration = 800; // ms
+                const startTime = Date.now();
+                
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function for smooth animation
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    
+                    this.zoomProgress = startZoom + (distance * easeProgress);
+                    this.updateView();
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        this.isScrolling = false;
+                    }
+                };
+                
+                animate();
+            }
+
+            updateView() {
+                // Continuous zoom calculation
+                const zoomDistance = this.zoomProgress * 2000;
+                
+                // Update zoom stage with smooth transform
+                this.zoomStage.style.transform = `translateZ(${zoomDistance}px)`;
+                
+                // Animate dynamic stars moving outward continuously - OPTIMIZED
+                const centerX = 50;
+                const centerY = 50;
+                
+                this.dynamicStars.forEach(star => {
+                    const layerSpeed = 1 + (star.layerIndex * 0.3);
+                    const personalSpeed = star.speed || 1;
+                    
+                    // Calculate movement once per frame
+                    const progressSinceBirth = this.zoomProgress - star.birthTime;
+                    const moveDistance = progressSinceBirth * 12 * layerSpeed * personalSpeed;
+                    
+                    // OPTIMIZED: Pre-calculate direction if not cached
+                    if (!star.directionX || !star.directionY) {
+                        const deltaX = star.baseX - centerX;
+                        const deltaY = star.baseY - centerY;
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        
+                        if (distance > 0) {
+                            star.directionX = deltaX / distance;
+                            star.directionY = deltaY / distance;
+                        } else {
+                            star.directionX = 0;
+                            star.directionY = 0;
+                        }
+                    }
+                    
+                    // Use cached direction for movement
+                    const newX = star.baseX + (star.directionX * moveDistance);
+                    const newY = star.baseY + (star.directionY * moveDistance);
+                    
+                    // Batch DOM updates
+                    const distanceFromCenter = Math.sqrt(Math.pow(newX - centerX, 2) + Math.pow(newY - centerY, 2));
+                    
+                    // Calculate opacity - ADJUSTED for full window
+                    let opacity = 1;
+                    if (distanceFromCenter > 60) { // Increased fade start distance
+                        opacity = Math.max(0, 1 - ((distanceFromCenter - 60) / 40)); // Fade over 40% distance
+                    }
+                    
+                    // Age-based fading - longer life for full coverage
+                    if (progressSinceBirth > 2.5) {
+                        const ageFade = Math.max(0, 1 - ((progressSinceBirth - 2.5) / 0.5));
+                        opacity = Math.min(opacity, ageFade);
+                    }
+                    
+                    // Single transform update
+                    const maxScale = 1.25;
+                    const baseScale = 1 + (this.zoomProgress * 0.05);
+                    const zoomScale = Math.min(baseScale, maxScale);
+                    const starScale = zoomScale * (0.95 + Math.random() * 0.1);
+                    
+                    // Apply all changes at once
+                    star.style.transform = `translate(${newX - star.baseX}%, ${newY - star.baseY}%) scale(${starScale})`;
+                    star.style.opacity = opacity;
+                });
+                
+                // Enhanced layer-based parallax effects - PERFORMANCE OPTIMIZED
+                const currentTime = Date.now() * 0.0005; // Slower breathing for less CPU
+                this.starLayers.forEach((layer, index) => {
+                    const maxLayerScale = 1.1; // Reduced max scale
+                    const layerScale = Math.min(1 + (this.zoomProgress * (0.015 + index * 0.01)), maxLayerScale);
+                    const layerRotation = this.zoomProgress * (0.2 + index * 0.15); // Reduced rotation
+                    
+                    // Minimal breathing effect
+                    const breathe = Math.sin(currentTime + index) * 0.003; // Much smaller effect
+                    const finalScale = layerScale + breathe;
+                    
+                    layer.style.transform = `scale(${finalScale}) rotate(${layerRotation}deg)`;
+                });
+                
+                // Update sections based on continuous progress
+                this.sections.forEach((section, index) => {
+                    const sectionProgress = this.zoomProgress - index;
+                    
+                    // Calculate opacity based on proximity to section
+                    let opacity = 0;
+                    if (sectionProgress >= -0.5 && sectionProgress <= 0.5) {
+                        opacity = 1 - Math.abs(sectionProgress) * 2;
+                    }
+                    
+                    // Apply smooth opacity transition and z-index management
+                    section.style.opacity = opacity;
+                    section.style.zIndex = opacity > 0.1 ? 10 : 1; // Higher z-index for visible sections
+                    section.classList.toggle('active', opacity > 0.5);
+                });
+                
+                // Update navigation dots
+                const currentSection = Math.round(this.zoomProgress);
+                this.navDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSection);
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new InwardZoomParallax();
+        });
+    </script>
+</body>
+</html>
