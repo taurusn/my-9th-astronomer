@@ -390,12 +390,76 @@
                 right: 20px;
             }
         }
+
+        /* Music Control Button */
+        .music-control-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .music-control-btn.playing {
+            background: rgba(0, 100, 0, 0.8);
+            border-color: rgba(0, 255, 0, 0.3);
+        }
+
+        .music-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .music-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .music-control-btn {
+                top: 15px;
+                right: 15px;
+                padding: 10px 12px;
+            }
+            
+            .music-text {
+                display: none;
+            }
+            
+            .music-icon {
+                font-size: 20px;
+            }
+        }
     </style>
     
     <!-- Music Player Script -->
     <script src="music-player.js"></script>
 </head>
 <body>
+    <!-- Music Control Button -->
+    <div class="music-control-btn" id="musicControlBtn">
+        <span class="music-icon">🎵</span>
+        <span class="music-text">Play Music</span>
+    </div>
+    
     <!-- Static background stars -->
     <div class="static-stars"></div>
     
