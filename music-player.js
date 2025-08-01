@@ -1,90 +1,147 @@
 /**
- * TRUE Autoplay Music for "My 9th Astronomer" Website
- * This will play automatically without user interaction
+ * Mobile-Friendly Autoplay Music for "My 9th Astronomer" Website
+ * Works on both desktop and mobile devices
  */
 
-// Create audio element with autoplay attributes
+// Detect if device is mobile
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// Create audio element
 const audio = new Audio();
 audio.src = 'music/background-music.mp3';
 audio.volume = 0.3;
 audio.loop = true;
-audio.autoplay = true;
-audio.muted = false;
 audio.preload = 'auto';
 
-// Force autoplay by setting HTML attributes
-audio.setAttribute('autoplay', '');
-audio.setAttribute('preload', 'auto');
+console.log('🎵 Music player initialized - Mobile:', isMobile);
 
-console.log('🎵 Music player initialized with force autoplay');
-
-// Multiple aggressive autoplay attempts
-function forceAutoplay() {
-    console.log('🎵 Forcing autoplay...');
+// Mobile-friendly autoplay function
+function attemptAutoplay() {
+    console.log('🎵 Attempting autoplay...');
     
-    // Method 1: Direct play
+    if (isMobile) {
+        // On mobile, show a prominent play button
+        showMobilePlayButton();
+        showMessage('🎵 Tap the play button to start music');
+    } else {
+        // On desktop, try aggressive autoplay
+        forceDesktopAutoplay();
+    }
+}
+
+// Desktop autoplay with multiple methods
+function forceDesktopAutoplay() {
     audio.play().then(() => {
-        console.log('🎵 SUCCESS: Music started with direct play!');
+        console.log('🎵 SUCCESS: Desktop autoplay worked!');
         showMessage('🎵 Music Playing Automatically');
     }).catch(() => {
-        console.log('🎵 Direct play failed, trying muted start...');
+        console.log('🎵 Desktop autoplay failed, trying muted start...');
         
-        // Method 2: Start muted then unmute
+        // Try muted start then unmute
         audio.muted = true;
         audio.play().then(() => {
-            console.log('🎵 SUCCESS: Music started muted, unmuting...');
+            console.log('🎵 SUCCESS: Muted start worked, unmuting...');
             setTimeout(() => {
                 audio.muted = false;
                 showMessage('🎵 Music Playing Automatically');
             }, 100);
         }).catch(() => {
-            console.log('🎵 Muted start failed, trying volume trick...');
-            
-            // Method 3: Start with very low volume
-            audio.volume = 0.01;
-            audio.muted = false;
-            audio.play().then(() => {
-                console.log('🎵 SUCCESS: Music started with low volume, increasing...');
-                // Gradually increase volume
-                let vol = 0.01;
-                const increaseVolume = setInterval(() => {
-                    vol += 0.02;
-                    if (vol >= 0.3) {
-                        vol = 0.3;
-                        clearInterval(increaseVolume);
-                    }
-                    audio.volume = vol;
-                }, 50);
-                showMessage('🎵 Music Playing Automatically');
-            }).catch(() => {
-                console.log('🎵 All autoplay methods failed');
-                showMessage('🎵 Click anywhere to start music');
-                setupInteractionStart();
-            });
+            console.log('🎵 All autoplay failed, showing interaction prompt');
+            showMessage('🎵 Click anywhere to start music');
+            setupInteractionStart();
         });
     });
 }
 
-// Quick user interaction fallback
+// Show prominent play button for mobile
+function showMobilePlayButton() {
+    // Remove existing button
+    const existing = document.querySelector('.mobile-play-button');
+    if (existing) existing.remove();
+    
+    const playButton = document.createElement('div');
+    playButton.className = 'mobile-play-button';
+    playButton.innerHTML = `
+        <div class="play-icon">▶️</div>
+        <div class="play-text">Tap to Play Music</div>
+    `;
+    
+    playButton.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        z-index: 10000;
+        cursor: pointer;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    `;
+    
+    // Add hover effect for mobile
+    playButton.addEventListener('touchstart', () => {
+        playButton.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        playButton.style.background = 'rgba(255, 255, 255, 0.1)';
+    });
+    
+    playButton.addEventListener('touchend', () => {
+        playButton.style.transform = 'translate(-50%, -50%) scale(1)';
+        playButton.style.background = 'rgba(0, 0, 0, 0.9)';
+    });
+    
+    playButton.addEventListener('click', () => {
+        startMobileMusic();
+        playButton.remove();
+    });
+    
+    document.body.appendChild(playButton);
+}
+
+// Start music on mobile
+function startMobileMusic() {
+    audio.muted = false;
+    audio.volume = 0.3;
+    
+    audio.play().then(() => {
+        console.log('🎵 Mobile music started successfully!');
+        showMessage('🎵 Music Playing', 2000);
+    }).catch((error) => {
+        console.log('🎵 Mobile music failed:', error);
+        showMessage('❌ Cannot play music on this device', 3000);
+    });
+}
+
+// Desktop interaction fallback
 function setupInteractionStart() {
-    const quickStart = () => {
+    const quickStart = (event) => {
+        console.log('🎵 User interaction detected:', event.type);
         audio.muted = false;
         audio.volume = 0.3;
         audio.play().then(() => {
             console.log('🎵 Music started after interaction');
-            showMessage('🎵 Music Playing');
+            showMessage('🎵 Music Playing', 2000);
+            // Remove listeners
+            document.removeEventListener('click', quickStart);
+            document.removeEventListener('scroll', quickStart);
+            document.removeEventListener('keydown', quickStart);
         });
     };
     
-    // Start on ANY interaction
     document.addEventListener('click', quickStart, { once: true });
     document.addEventListener('scroll', quickStart, { once: true });
     document.addEventListener('keydown', quickStart, { once: true });
-    document.addEventListener('mousemove', quickStart, { once: true });
 }
 
 // Show status message
-function showMessage(text) {
+function showMessage(text, duration = 3000) {
     const existing = document.querySelector('.music-message');
     if (existing) existing.remove();
     
@@ -109,32 +166,32 @@ function showMessage(text) {
     
     document.body.appendChild(message);
     
-    if (!text.includes('Click')) {
-        setTimeout(() => message.remove(), 3000);
+    if (!text.includes('Click') && !text.includes('Tap')) {
+        setTimeout(() => message.remove(), duration);
     }
 }
 
 // Audio events
 audio.addEventListener('loadstart', () => console.log('🎵 Loading...'));
 audio.addEventListener('canplay', () => {
-    console.log('🎵 Audio ready, forcing play...');
-    forceAutoplay();
+    console.log('🎵 Audio ready, starting appropriate play method...');
+    attemptAutoplay();
 });
 audio.addEventListener('play', () => console.log('🎵 ✅ PLAYING!'));
 audio.addEventListener('error', (e) => console.log('🎵 Error:', e));
 
 // Start immediately
-console.log('🎵 Starting autoplay sequence...');
-forceAutoplay();
+console.log('🎵 Starting music player...');
+attemptAutoplay();
 
 // Try again when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🎵 DOM loaded, trying autoplay again...');
-    setTimeout(forceAutoplay, 200);
+    setTimeout(attemptAutoplay, 200);
 });
 
 // And try again when window loads
 window.addEventListener('load', () => {
     console.log('🎵 Window loaded, final autoplay attempt...');
-    setTimeout(forceAutoplay, 500);
+    setTimeout(attemptAutoplay, 500);
 });

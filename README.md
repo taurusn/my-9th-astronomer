@@ -16,7 +16,7 @@ The website includes background music that enhances the romantic astronomical ex
 
 ## 🚀 Live Demo
 
-Visit the live website: [Coming Soon]
+Visit the live website: **https://taurusn.github.io/my-9th-astronomer/**
 
 ## 🛠️ Technologies Used
 
