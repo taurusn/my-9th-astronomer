@@ -212,6 +212,82 @@ function showMessage(text, duration = 3000) {
     setInterval(removeOnStart, 500);
 }
 
+// Create small corner play button
+function createCornerPlayButton() {
+    // Remove existing button
+    const existing = document.querySelector('.corner-play-button');
+    if (existing) existing.remove();
+    
+    const button = document.createElement('div');
+    button.className = 'corner-play-button';
+    button.innerHTML = musicStarted ? '🎵' : '▶️';
+    button.title = musicStarted ? 'Music Playing' : 'Click to Play Music';
+    
+    button.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10000;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    `;
+    
+    // Hover effects
+    button.addEventListener('mouseenter', () => {
+        button.style.transform = 'scale(1.1)';
+        button.style.background = 'rgba(255, 255, 255, 0.1)';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+        button.style.background = 'rgba(0, 0, 0, 0.8)';
+    });
+    
+    // Click handler
+    button.addEventListener('click', () => {
+        if (!musicStarted) {
+            console.log('🎵 Corner button clicked - starting music');
+            playMusicNow();
+            button.innerHTML = '🎵';
+            button.title = 'Music Playing';
+        } else {
+            // Toggle pause/play
+            if (audio.paused) {
+                audio.play();
+                button.innerHTML = '🎵';
+                button.title = 'Music Playing';
+            } else {
+                audio.pause();
+                button.innerHTML = '⏸️';
+                button.title = 'Music Paused';
+            }
+        }
+    });
+    
+    document.body.appendChild(button);
+    
+    // Update button state when music starts from other sources
+    const updateButton = () => {
+        if (musicStarted && button.innerHTML === '▶️') {
+            button.innerHTML = '🎵';
+            button.title = 'Music Playing';
+        }
+    };
+    setInterval(updateButton, 500);
+}
+
 // Audio events
 audio.addEventListener('loadstart', () => {
     console.log('🎵 Loading audio...');
@@ -233,6 +309,7 @@ audio.addEventListener('error', (e) => console.log('🎵 Audio error:', e));
 // Initialize everything immediately
 console.log('🎵 Initializing always-ready music player...');
 setupPermanentListeners();
+createCornerPlayButton();
 
 // Show mobile hint if on mobile device
 if (isMobile) {
@@ -245,10 +322,12 @@ if (isMobile) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🎵 DOM loaded - listeners still active');
     setupPermanentListeners(); // Make sure listeners are active
+    createCornerPlayButton(); // Ensure button exists
 });
 
 // And when window loads
 window.addEventListener('load', () => {
     console.log('🎵 Window loaded - ready for interaction');
     setupPermanentListeners(); // Ensure listeners are definitely active
+    createCornerPlayButton(); // Ensure button exists
 });
